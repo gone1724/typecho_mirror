@@ -1,5 +1,5 @@
 <h1 align="center">博客镜像器</h1>
-<p align="center">基于 wget 的 Typecho 博客静态化工具，使用 uv 管理。</p>
+<p align="center">基于 wget 的 Typecho 博客静态化工具</p>
 
 ## ✨ 项目特点
 
