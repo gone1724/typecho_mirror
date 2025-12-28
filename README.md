@@ -3,10 +3,10 @@
 
 ## ✨ 项目特点
 
-- 默认适配 Typecho 公开页，自动避开后台、登录、评论接口。
-- 产出目录 `site/` 可直接部署到 Cloudflare Pages / GitHub Pages。
+- 默认适配 Typecho 公开页，自动避开后台、登录、评论等接口。
+- 输出目录为 `site/` ，可直接部署到 Cloudflare Pages / GitHub Pages。
 - 抓取后重写站内链接与外链图片为本地相对路径，保证离线可用。
-- 先 `--spider` 探活，抓到 `site_tmp/` 后原子替换 `site/`，失败保留旧版。
+- 逻辑上，先 `--spider` 探活，抓到 `site_tmp/` 后原子替换 `site/`，失败则保留旧版。
 
 ## 🧰 环境与安装
 
@@ -25,7 +25,7 @@ uv run python mirror.py
 # 增量抓取（默认网址需在 .py 中修改）
 uv run python mirror.py --no-clean
 
-# 仅探活（默认网址需在 .py 中修改）
+# 仅探活测试（默认网址需在 .py 中修改）
 uv run python mirror.py --spider
 ```
 
