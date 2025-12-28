@@ -1,0 +1,22 @@
+[project]
+name = "typecho_mirror"
+version = "0.1.0"
+description = "Typecho blog mirror utility managed by uv"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.scripts]
+mirror = "mirror:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+
+[tool.hatch.build.targets.wheel]
+only-include = ["mirror.py", "README.md", "AI.txt"]
+
+[tool.hatch.build.targets.sdist]
+include = ["mirror.py", "README.md", "AI.txt"]

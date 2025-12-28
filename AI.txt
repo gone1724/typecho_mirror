@@ -1,0 +1,198 @@
+## 本文件为初版 prompt，仅作留档
+
+1. 工程总体目标
+
+创建一个使用 uv 管理的 Python 工程，包含一个镜像工具脚本，该脚本可以：
+
+把你的 Typecho 博客 抓成完整的静态镜像网站；
+
+只抓公开页面（文章、分页、分类、归档等），不抓后台和 feed；
+
+抓取结果保存到工程目录下的指定文件夹（如 site/）；
+
+最终的 site/ 可直接部署到 Cloudflare Pages / GitHub Pages。
+
+2. wget 的运行方式（非常重要）
+
+直接调用系统中已有的 wget 程序。
+
+Windows 环境
+
+不依赖系统是否安装 wget；
+
+Python 脚本要优先调用你工程文件夹下自己的 wget：
+
+tools/mingw64/bin/wget.exe
+
+
+也就是说，脚本内部的规则应该是：
+
+如果系统里有 wget（Linux/macOS） → 用系统的；
+
+如果没有 → 用 tools/mingw64/bin/wget.exe；
+
+必须正确处理路径（绝对路径或相对脚本路径）。
+
+这让你的脚本在 所有系统都能一键运行。
+
+3. 工程目录结构（目标结构）
+
+你希望工程最终大致长这样：
+
+project_root/
+│
+├─ pyproject.toml        # uv 工程配置
+├─ mirror.py             # 主脚本
+│
+├─ tools/                # 内置工具
+│   └─ mingw64/
+│       └─ bin/
+│           └─ wget.exe
+│           └─ （可能还需要依赖 DLL）
+│
+└─ site/                 # 抓取后的静态网站输出目录
+
+
+脚本运行后：
+
+site/
+  ├─ index.html
+  ├─ archives/...
+  ├─ page/...
+  ├─ category/...
+  ├─ usr/themes/default/...
+  └─ ...
+
+4. 抓取需求（wget 行为）
+
+你的脚本必须用 wget 模式实现：
+
+🔍 需要抓的内容
+
+首页
+
+/page/*/ 分页
+
+/archives/*/ 文章
+
+/category/*/ 分类
+
+/author/*/ 作者页
+
+/2025/12/, /2021/05/ 等时间归档
+
+所有主题资源（CSS、JS、图片）
+
+页面里能看到的所有内部链接
+
+❌ 必须排除的内容（不能抓）
+
+/admin 管理后台
+
+/login, /register
+
+/action（xmlrpc / wlw /评论接口等）
+
+/feed/*（RSS/Atom）
+
+任何后台相关路径
+
+这一点你已经在 wget spider 测试中过滤出来了。
+
+📌 wget 必须使用的功能（效果）
+
+整站镜像（--mirror）
+
+下载页面依赖资源（CSS/JS/img）
+
+转换链接为本地可用（convert-links）
+
+调整扩展名适应静态托管（adjust-extension）
+
+不生成多余的顶层目录（-nH）
+
+排除后台和 feed 路径（正则 reject）
+
+5. 输出目录要求
+
+输出目录为工程根目录下的 site/。
+
+如果目录存在：
+
+是否清空 → 由脚本配置决定（布尔开关）。
+
+如果不存在：
+
+自动创建。
+
+6. Python 脚本行为（不写代码，仅需求）
+
+脚本 mirror.py 需要做：
+
+📌 1. 自动侦测脚本所在目录
+
+确保能够找到：
+
+tools/mingw64/bin/wget.exe
+
+
+本地路径必须正确解析。
+
+📌 2. 自动选择 wget 版本
+
+Linux/macOS：优先使用系统 wget；
+
+Windows：优先使用工程自带的 wget.exe；
+
+脚本内部要做“路径拼接 + 文件存在性检测”。
+
+📌 3. 拼装一条完整的 wget 静态镜像命令
+
+包括：
+
+--mirror
+
+--convert-links
+
+--adjust-extension
+
+--page-requisites
+
+--no-parent
+
+项目需求的正则排除路径：
+--reject-regex=/(admin|login|register|action|feed)/
+
+输出目录：-P site/
+
+去掉 host 目录：-nH
+
+起始 URL：https://blog.example.com/
+
+📌 4. 调用 subprocess 执行 wget
+
+实时打印 wget 输出（用户可看到抓取进度）
+
+等待 wget 结束
+
+返回成功或失败结果
+
+📌 5. 可扩展选项（未来可做）
+
+测试模式：使用 --spider 不下载只检查
+
+自动 git 提交（后续需要时再加）
+
+日志文件输出
+
+7. uv 工程需求
+
+使用 uv 初始化：
+
+创建 pyproject.toml
+
+管理 Python 版本
+
+目前无需第三方库（用标准库即可）
+
+未来如果需要 CLI 参数解析，可以安装 typer 或 click
