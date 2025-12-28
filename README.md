@@ -19,6 +19,9 @@
 ## 常用命令
 
 ```bash
+# 指定站点与输出目录（请填公开网址）
+uv run python mirror.py --url https://example.com/ --output-dir my_site
+
 # 默认：清空临时目录，从零抓取
 uv run python mirror.py
 
@@ -27,9 +30,6 @@ uv run python mirror.py --no-clean
 
 # 仅探活，不下载
 uv run python mirror.py --spider
-
-# 指定站点与输出目录（请填公开网址）
-uv run python mirror.py --url https://example.com/ --output-dir my_site
 ```
 
 ## 自动化
