@@ -29,6 +29,9 @@ uv run python mirror.py --no-clean
 uv run python mirror.py --spider
 ```
 
+## 🐛 已知BUG
+- 网站需要加 HTTPS，例如 `https://balabala.com` ，否则会被识别为相对地址，导致内容抓不到，最终报错。
+
 ## 🤖 自动化
 
 - 参考 `run_mirror.sh`：`git pull` -> `uv run python mirror.py` -> 有变更自动提交推送，可挂定时任务。
