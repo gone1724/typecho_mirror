@@ -25,7 +25,7 @@ from urllib.request import urlopen
 
 DEFAULT_URL = "https://blog.example.com/"
 DEFAULT_OUTPUT_DIR = "site"
-REJECT_REGEX = r"/(admin|login|register|action|feed)/"
+REJECT_REGEX = r"/(admin|login|register|action|feed|cdn-cgi)/|/sitemap\.xml$"
 
 
 def project_root() -> Path:
